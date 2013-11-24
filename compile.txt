@@ -1,0 +1,1 @@
+emcc emscripten_tests.cpp --preload-file asset_dir -o test.html
