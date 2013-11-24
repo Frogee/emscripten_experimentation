@@ -115,7 +115,7 @@ Module['FS_createPath']('/', 'asset_dir', true, true);
     var PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.toString().substring(0, window.location.pathname.toString().lastIndexOf('/')) + '/');
     var PACKAGE_NAME = 'test.data';
     var REMOTE_PACKAGE_NAME = 'test.data';
-    var PACKAGE_UUID = 'f178e63c-12c4-4606-83c8-25e7e1f0e231';
+    var PACKAGE_UUID = 'fcc18e65-cf63-420f-914c-2af3a402e665';
   
     function processPackageData(arrayBuffer) {
       Module.finishedDataFileDownloads++;
