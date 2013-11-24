@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
 #include <emscripten.h>
 #include <assert.h>
 #include <vector>
@@ -15,12 +16,19 @@ const int SCREEN_HEIGHT = 480;
 const int SCREEN_BPP = 32;
 
 //The surfaces that will be used
+SDL_Surface *asset = NULL;
 SDL_Surface *message = NULL;
 SDL_Surface *background = NULL;
 SDL_Surface *screen = NULL;
 
 //The event structure that will be used
 SDL_Event event;
+
+//The font that's going to be used
+TTF_Font *font = NULL;
+
+//The color of the font
+SDL_Color textColor = { 128, 0, 128 };
 
 void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination )
 {
@@ -56,7 +64,10 @@ bool init() {
     if( screen == NULL ) {return false;}
 
     //Set the window caption
-    SDL_WM_SetCaption( "Event test", NULL );
+    SDL_WM_SetCaption( "Tests", NULL );
+
+     //Initialize SDL_ttf
+    if( TTF_Init() == -1 ) {return false;}
 
     //If everything initialized fine
     return true;
@@ -88,20 +99,35 @@ int main( int argc, char* args[] ) {
 //Initialize
     if( init() == false ) {return 1;}
 
-  background = load_image("asset_dir/Test.bmp");
-  message = load_image("asset_dir/Test2.bmp");
+  background = load_image("asset_dir/Background.png");
+  asset = load_image("asset_dir/dino_transp_resized.png");
+
+  //Open the font
+  std::cout << "Trying to open font" << std::endl;
+  //font = TTF_OpenFont("sans-serif", 28);
+  font = TTF_OpenFont("fantasy", 28);
+  if( font == NULL ) {
+        std::cout << "couldn't open font" << std::endl;
+        return false;
+  }
+  if( font != NULL ) {
+        std::cout << "opened font?" << std::endl;
+  }
+
+  //Render the text
+  message = TTF_RenderText_Solid(font, "DinoGurl's Big Adventure!", textColor);
 
   SDL_BlitSurface (background, NULL, screen, NULL);
 
 
   //Apply the background to the screen
   apply_surface( 0, 0, background, screen );
-  apply_surface( 320, 0, background, screen );
-  apply_surface( 0, 240, background, screen );
-  apply_surface( 320, 240, background, screen );
+
+  //Apply the asset to the screen
+  apply_surface( 180, 260, asset, screen );
 
   //Apply the message to the screen
-  apply_surface( 180, 140, message, screen );
+  apply_surface(220, 140, message, screen);
 
   SDL_Flip(screen);
 
@@ -111,6 +137,15 @@ int main( int argc, char* args[] ) {
 
   //Quit SDL
   SDL_Quit();
-
+  //Free the surfaces
+  SDL_FreeSurface( background );
+  SDL_FreeSurface( asset);
+  SDL_FreeSurface( message );
+  //Close the font that was used
+  TTF_CloseFont( font );
+  //Quit SDL_ttf
+  TTF_Quit();
+  //Quit SDL
+  SDL_Quit();
   return 0;
 }
